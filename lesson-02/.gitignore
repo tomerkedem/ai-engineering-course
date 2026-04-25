@@ -1,0 +1,44 @@
+# =========================
+# Python cache and compiled files
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyc.*
+*.py,cover
+
+# =========================
+# Virtual environments
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# VS Code settings
+# =========================
+.vscode/
+
+# =========================
+# Jupyter Notebook checkpoints
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Operating system files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Generated images (optional)
+# Uncomment if you do NOT want to track images in the repository
+# =========================
+# images/
