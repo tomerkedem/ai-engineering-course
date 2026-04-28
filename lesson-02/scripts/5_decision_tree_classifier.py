@@ -23,8 +23,11 @@ import matplotlib.pyplot as plt
 
 def load_dataframe(csv_path: str) -> pd.DataFrame:
     """Load Iris CSV and print a short overview."""
+    import os
     print("Loading Iris dataset...")
-    df = pd.read_csv(csv_path)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_full_path = os.path.join(script_dir, "..", "data", "Iris.csv")
+    df = pd.read_csv(csv_full_path)
     print("\nDataset Info:")
     print(df.info())
     print("\nFirst few rows:")

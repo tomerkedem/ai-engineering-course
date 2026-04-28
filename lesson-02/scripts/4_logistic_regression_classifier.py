@@ -16,8 +16,11 @@ def prepare_data(csv_path: str = "data/Social_Network_Ads.csv"):
     Load the Social Network Ads CSV, extract features and target, print a short
     summary, and split into training and test sets for supervised learning.
     """
-    # Load tabular data from disk into a DataFrame.
-    df = pd.read_csv(csv_path)
+    # Resolve CSV path relative to this script's directory for robustness
+    import os
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_full_path = os.path.join(script_dir, "..", "data", "Social_Network_Ads.csv")
+    df = pd.read_csv(csv_full_path)
     # Feature matrix: two numeric columns as NumPy arrays (rows = samples).
     X = df[["Age", "EstimatedSalary"]].values
     # Target vector: binary label (0 = did not purchase, 1 = purchased).

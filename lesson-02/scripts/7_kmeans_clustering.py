@@ -27,7 +27,10 @@ def ensure_output_dir(file_path):
 
 
 def load_X(csv_path="data/penguins.csv"):
-    df = pd.read_csv(csv_path)
+    # Resolve CSV path relative to this script's directory for robustness
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_full_path = os.path.join(script_dir, "..", "data", "penguins.csv")
+    df = pd.read_csv(csv_full_path)
     return df[NUMERICAL_FEATURES].dropna().values
 
 

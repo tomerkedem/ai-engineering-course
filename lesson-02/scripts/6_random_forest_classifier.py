@@ -29,7 +29,10 @@ def ensure_images_dir(path="images"):
 
 def read_iris(csv_path):
     """Load the Iris CSV into a DataFrame (no preprocessing)."""
-    return pd.read_csv(csv_path)
+    # Resolve CSV path relative to this script's directory for robustness
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_full_path = os.path.join(script_dir, "..", "data", "Iris.csv")
+    return pd.read_csv(csv_full_path)
 
 
 def print_data_overview(df):

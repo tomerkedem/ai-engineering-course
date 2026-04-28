@@ -2,6 +2,8 @@
 Linear Regression using scikit-learn for predicting continuous sale prices from living area.
 """
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -10,8 +12,11 @@ from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 
 
+DEFAULT_CSV = Path(__file__).resolve().parent.parent / "data" / "AmesHousing.csv"
+
+
 def prepare_data(
-    csv_path: str = "data/AmesHousing.csv",
+    csv_path: str | Path = DEFAULT_CSV,
     test_size: float = 0.2,
     random_state: int = 42,
 ):
