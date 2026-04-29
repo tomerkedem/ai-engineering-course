@@ -23,7 +23,25 @@ def load_model():
     return joblib.load(MODEL_PATH)
 
 
-def predict_price(model, living_area):
+def parse_living_area(user_input: str) -> float:
+    # ----------------------------------------
+    # Convert CLI input into a valid number
+    # ----------------------------------------
+    # input() always returns text.
+    # We need to convert it to float before using it.
+    value = float(user_input)
+
+    # ----------------------------------------
+    # Validate business meaning
+    # ----------------------------------------
+    # A house living area must be greater than zero.
+    if value <= 0:
+        raise ValueError("Living area must be greater than zero.")
+
+    return value
+
+
+def predict_price(model, living_area: float) -> float:
     # ----------------------------------------
     # Convert user input into model input format
     # ----------------------------------------
@@ -49,27 +67,44 @@ def main():
 
     print("Linear Regression model loaded successfully.")
     print("Enter a living area in square feet.")
+    print("Type 'exit' to quit.")
 
     # ----------------------------------------
-    # 2. Read input from user
+    # 2. Keep asking the user for input
     # ----------------------------------------
-    user_input = input("Living area: ")
+    while True:
+        user_input = input("\nLiving area: ").strip()
 
-    # ----------------------------------------
-    # 3. Convert input to number
-    # ----------------------------------------
-    living_area = float(user_input)
+        # ----------------------------------------
+        # 3. Allow the user to exit the program
+        # ----------------------------------------
+        if user_input.lower() in {"exit", "quit", "q"}:
+            print("Goodbye.")
+            break
 
-    # ----------------------------------------
-    # 4. Predict sale price
-    # ----------------------------------------
-    predicted_price = predict_price(model, living_area)
+        try:
+            # ----------------------------------------
+            # 4. Parse and validate input
+            # ----------------------------------------
+            living_area = parse_living_area(user_input)
 
-    # ----------------------------------------
-    # 5. Print result
-    # ----------------------------------------
-    print(f"Predicted Sale Price: ${predicted_price:,.2f}")
+            # ----------------------------------------
+            # 5. Predict sale price
+            # ----------------------------------------
+            predicted_price = predict_price(model, living_area)
+
+            # ----------------------------------------
+            # 6. Print result
+            # ----------------------------------------
+            print(f"Predicted Sale Price: ${predicted_price:,.2f}")
+
+        except ValueError:
+            # ----------------------------------------
+            # Handle illegal input without crashing
+            # ----------------------------------------
+            print("Invalid input. Please enter a positive number, for example: 1500")
 
 
 if __name__ == "__main__":
     main()
+
