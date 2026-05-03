@@ -2,3 +2,5 @@ spacy>=3.7.0
 nltk
 gensim
 numpy
+
+sentence-transformers

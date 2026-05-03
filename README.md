@@ -43,3 +43,25 @@ Notes
 
 This repository will be updated as the course progresses
 and additional labs are introduced.
+
+## Home Practice 1: Word2Vec Sentence Embeddings
+
+This script extends the first Word2Vec notebook by creating a simple sentence embedding.
+It removes stop words, averages the vectors of the remaining words, and compares two sentences using cosine similarity.
+
+Run:
+
+```bash
+python 5_word2vec_sentence_embeddings.py
+```
+
+## Home Practice 2: BERT FAQ Semantic Search
+
+This script builds a small FAQ semantic search engine using Sentence Transformers.
+It returns the top-k most relevant answers from a small knowledge base and uses
+a similarity threshold to avoid returning unrelated answers.
+
+Run:
+
+```bash
+python 6_bert_faq_semantic_search.py
