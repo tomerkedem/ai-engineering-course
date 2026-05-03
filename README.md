@@ -65,3 +65,16 @@ Run:
 
 ```bash
 python 6_bert_faq_semantic_search.py
+```
+
+## Home Practice Bonus: BERT Customer Feedback Clustering
+
+This script converts customer feedback sentences into sentence embeddings
+and uses K-Means clustering to group similar feedback items together.
+
+Run:
+
+```bash
+python 7_bert_customer_feedback_clustering.py
+```
+
