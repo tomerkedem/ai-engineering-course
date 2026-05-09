@@ -17,3 +17,5 @@ __pycache__/
 Thumbs.db
 .vscode/
 .idea/
+
+homework/exercise01-document-classification/summaries/
