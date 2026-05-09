@@ -77,4 +77,48 @@ The program will:
 3. Receive a JSON response with:
    - class_name
    - summary
-4
+
+
+
+
+## Exercise 02: Conversation History
+
+The goal of this exercise is to build a multi-turn conversation application using an LLM.
+
+The program stores both user messages and assistant responses inside a conversation history list and sends the full history to the model during every API call.
+
+This exercise demonstrates how conversational AI systems work internally.
+
+### Project Structure
+
+```text
+exercise02-conversation-history/
+  conversation_history.py
+```
+
+### Running the Program
+
+From the `lesson-04-llm-apis` folder run:
+
+```bash
+python homework/exercise02-conversation-history/conversation_history.py
+```
+
+### Example Conversation
+
+```text
+You: What is your name?
+Claude: My name is Claude.
+
+You: What did you answer before?
+Claude: I said my name is Claude.
+```
+
+### Key Concepts
+
+- Conversation history
+- Multi-turn conversations
+- messages array
+- user / assistant roles
+- Stateful chat applications
+- Sending full history to the LLM
