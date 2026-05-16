@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["department", "priority", "sentiment", "entities"],
+  "properties": {
+    "department": {
+      "type": "string",
+      "enum": ["billing", "technical_support", "sales", "complaints"]
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "sentiment": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
