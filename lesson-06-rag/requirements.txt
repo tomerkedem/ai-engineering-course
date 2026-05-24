@@ -1,9 +1,6 @@
 sentence-transformers
-faiss-cpu
 numpy
-
-python-dotenv
-anthropic
-
+chromadb
 langchain-text-splitters
-
+anthropic
+python-dotenv

@@ -1,16 +1,14 @@
-"""Interactive RAG client: retrieve chunks and answer with Claude Haiku 4.5."""
-
-import json
 import os
 from pathlib import Path
 
-import faiss
-import numpy as np
+import chromadb
 from anthropic import Anthropic
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 
-INDEX_DIR = Path("data/faiss_index")
+CHROMA_DIR = Path("data/chroma_db")
+COLLECTION_NAME = "starwars_docs"
+EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 TOP_K = 10
 LLM_MODEL = "claude-haiku-4-5-20251001"
 
@@ -19,54 +17,49 @@ Rules:
 - Answer only using information explicitly stated in the context.
 - If the context does not contain enough information to answer, say you cannot answer from the provided context.
 - Do not use outside knowledge or make assumptions beyond the context.
-- always answer in this format: 1. person - description\n2. person - description\n3. person - description\n..."""
+- Answer in a clear structure that fits the user's question.
+"""
 
 
-def load_index_and_chunks(index_dir: Path) -> tuple[faiss.Index, list[str], str]:
-    """Load FAISS index, chunk texts, and embedding model name from disk."""
-    metadata = json.loads((index_dir / "metadata.json").read_text(encoding="utf-8"))
-    index = faiss.read_index(str(index_dir / "index.faiss"))
-    return index, metadata["chunks"], metadata["model"]
+def load_collection():
+    client = chromadb.PersistentClient(path=str(CHROMA_DIR))
+    return client.get_collection(name=COLLECTION_NAME)
 
 
-def search(
-    question: str,
-    index: faiss.Index,
-    chunks: list[str],
-    model: SentenceTransformer,
-    top_k: int,
-) -> list[tuple[int, float, str]]:
-    """Return top_k chunks as (index, L2 distance, text)."""
-    query = np.array([model.encode(question)], dtype="float32")
-    distances, indices = index.search(query, top_k)
-    results = []
-    for rank in range(top_k):
-        chunk_idx = int(indices[0][rank])
-        distance = float(distances[0][rank])
-        results.append((chunk_idx, distance, chunks[chunk_idx]))
-    return results
+def search(question: str, collection, model: SentenceTransformer, top_k: int) -> list[dict]:
+    query_embedding = model.encode(question).tolist()
+
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=top_k,
+        include=["documents", "distances", "metadatas"],
+    )
+
+    retrieved = []
+    for i in range(len(results["documents"][0])):
+        retrieved.append(
+            {
+                "document": results["documents"][0][i],
+                "distance": results["distances"][0][i],
+                "metadata": results["metadatas"][0][i],
+            }
+        )
+
+    return retrieved
 
 
-def print_results(results: list[tuple[int, float, str]]) -> None:
-    for rank, (chunk_idx, distance, text) in enumerate(results, start=1):
-        print(f"\n--- Result {rank} (chunk {chunk_idx}, distance {distance:.4f}) ---")
-        print(text)
-
-
-def format_context(results: list[tuple[int, float, str]]) -> str:
+def format_context(results: list[dict]) -> str:
     sections = []
-    for rank, (chunk_idx, _distance, text) in enumerate(results, start=1):
-        sections.append(f"[Chunk {rank} | index {chunk_idx}]\n{text}")
+    for rank, item in enumerate(results, start=1):
+        sections.append(
+            f"[Chunk {rank} | metadata: {item['metadata']}]\n{item['document']}"
+        )
     return "\n\n".join(sections)
 
 
-def answer_from_context(
-    question: str,
-    results: list[tuple[int, float, str]],
-    client: Anthropic,
-) -> str:
-    """Ask Claude Haiku 4.5 to answer using only the retrieved chunks."""
+def answer_from_context(question: str, results: list[dict], client: Anthropic) -> str:
     context = format_context(results)
+
     response = client.messages.create(
         model=LLM_MODEL,
         max_tokens=1024,
@@ -82,20 +75,22 @@ def answer_from_context(
             }
         ],
     )
+
     return response.content[0].text
 
 
 def main() -> None:
     load_dotenv()
+
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
         raise SystemExit("ANTHROPIC_API_KEY is not set. Add it to .env or your environment.")
 
-    index, chunks, model_name = load_index_and_chunks(INDEX_DIR)
-    model = SentenceTransformer(model_name)
+    collection = load_collection()
+    model = SentenceTransformer(EMBEDDING_MODEL)
     client = Anthropic(api_key=api_key)
 
-    print("RAG client ready. Ask a question (empty line or 'quit' to exit).\n")
+    print("ChromaDB RAG client ready. Ask a question (empty line or 'quit' to exit).\n")
 
     while True:
         try:
@@ -107,10 +102,9 @@ def main() -> None:
         if not question or question.lower() in {"quit", "exit", "q"}:
             break
 
-        results = search(question, index, chunks, model, TOP_K)
-        # print_results(results)
-
+        results = search(question, collection, model, TOP_K)
         answer = answer_from_context(question, results, client)
+
         print(f"\n=== Answer ===\n{answer}")
 
     print("Goodbye.")
