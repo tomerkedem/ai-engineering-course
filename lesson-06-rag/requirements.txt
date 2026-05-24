@@ -1,7 +1,7 @@
 sentence-transformers
 faiss-cpu
 numpy
-langchain-text-splitters
+
 python-dotenv
 anthropic
 
