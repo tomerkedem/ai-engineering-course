@@ -9,7 +9,7 @@ from sentence_transformers import SentenceTransformer
 CHROMA_DIR = Path("data/chroma_db")
 COLLECTION_NAME = "starwars_docs"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-TOP_K = 10
+TOP_K = 3
 LLM_MODEL = "claude-haiku-4-5-20251001"
 
 SYSTEM_PROMPT = """You are a helpful assistant that answers questions using only the provided context chunks.
@@ -78,7 +78,14 @@ def answer_from_context(question: str, results: list[dict], client: Anthropic) -
 
     return response.content[0].text
 
+def print_results(results: list[dict]) -> None:
+    for rank, item in enumerate(results, start=1):
+        print(f"\n--- Result {rank} ---")
+        print(f"Distance: {item['distance']}")
+        print(f"Metadata: {item['metadata']}")
+        print(item["document"])
 
+ 
 def main() -> None:
     load_dotenv()
 
@@ -106,6 +113,7 @@ def main() -> None:
         answer = answer_from_context(question, results, client)
 
         print(f"\n=== Answer ===\n{answer}")
+        print_results(results)
 
     print("Goodbye.")
 
