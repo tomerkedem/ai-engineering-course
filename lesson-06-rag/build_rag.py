@@ -7,6 +7,7 @@ from pathlib import Path
 import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 DATA_FILE = Path("data/starwars_ships_docs.txt")
 INDEX_DIR = Path("data/faiss_index")
@@ -112,7 +113,18 @@ def save_faiss_index(embeddings: np.ndarray, chunks: list[str], output_dir: Path
 
 def main() -> None:
     documents = load_documents(DATA_FILE)
-    chunks = chunk_documents(documents, MAX_WORDS, OVERLAP_WORDS)
+    
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1500,
+        chunk_overlap=300,
+        separators=["\n\n", "\n", ". ", " ", ""],
+    )
+
+    chunks = []
+    for document in documents:
+        chunks.extend(text_splitter.split_text(document))
+
+
     embeddings = build_embeddings(chunks, EMBEDDING_MODEL)
     save_faiss_index(embeddings, chunks, INDEX_DIR)
 
