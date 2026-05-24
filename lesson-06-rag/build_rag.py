@@ -37,14 +37,19 @@ def build_embeddings(chunks: list[str], model_name: str) -> list[list[float]]:
 
 
 def save_to_chroma(chunks: list[str], embeddings: list[list[float]]) -> None:
-    if CHROMA_DIR.exists():
-        shutil.rmtree(CHROMA_DIR)
-
     client = chromadb.PersistentClient(path=str(CHROMA_DIR))
     collection = client.get_or_create_collection(name=COLLECTION_NAME)
 
-    ids = [f"chunk-{i}" for i in range(len(chunks))]
-    metadatas = [{"chunk_index": i} for i in range(len(chunks))]
+    existing_count = collection.count()
+
+    ids = [f"chunk-{existing_count + i}" for i in range(len(chunks))]
+    metadatas = [
+        {
+            "chunk_index": existing_count + i,
+            "source": DATA_FILE.name,
+        }
+        for i in range(len(chunks))
+    ]
 
     collection.add(
         ids=ids,
@@ -52,6 +57,11 @@ def save_to_chroma(chunks: list[str], embeddings: list[list[float]]) -> None:
         embeddings=embeddings,
         metadatas=metadatas,
     )
+
+    print(f"Collection had {existing_count} vectors before insert")
+    print(f"Added {len(chunks)} new vectors")
+    print(f"Collection now has {collection.count()} vectors")
+
 
 
 def main() -> None:
