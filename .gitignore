@@ -8,6 +8,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.cache/
 
 # Jupyter
 .ipynb_checkpoints/
@@ -21,4 +22,5 @@ Thumbs.db
 # Environment variables
 .env
 
-homework/exercise01-document-classification/summaries/
+models/
+outputs/
