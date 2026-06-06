@@ -25,11 +25,20 @@ def predict_sentiment(text):
     with torch.no_grad():
         outputs = model(**inputs)
     
-    probabilities = torch.nn.functional.softmax(outputs.logits, dim=-1)
+    logits = outputs.logits
+    probabilities = torch.nn.functional.softmax(logits, dim=-1)
+
     predicted_class = torch.argmax(probabilities, dim=-1).item()
+    confidence = probabilities[0][predicted_class].item()
+
     
     sentiment_map = {0: "Very Negative", 1: "Negative", 2: "Neutral", 3: "Positive", 4: "Very Positive"}
-    return sentiment_map[predicted_class]
+    
+    return {
+        "label": sentiment_map[predicted_class],
+        "confidence": confidence
+    }
+
 
 # Example usage
 texts = [
@@ -41,6 +50,9 @@ texts = [
 ]
 
 for text in texts:
-    sentiment = predict_sentiment(text)
+    result = predict_sentiment(text)
+
     print(f"Text: {text}")
-    print(f"Sentiment: {sentiment}\n")
+    print(f"Sentiment: {result['label']}")
+    print(f"Confidence: {result['confidence']:.2%}")
+    print()
