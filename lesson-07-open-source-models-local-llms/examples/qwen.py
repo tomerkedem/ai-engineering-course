@@ -1,4 +1,16 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+hf_token = os.getenv("HF_TOKEN")
+
+if not hf_token:
+    raise RuntimeError("HF_TOKEN is missing. Please define it in your .env file.")
+
+print("HF_TOKEN loaded:", bool(hf_token))
 
 model_name = "Qwen/Qwen3-0.6B"
 
