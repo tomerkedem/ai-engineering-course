@@ -3,4 +3,4 @@ torch
 accelerate
 python-dotenv
 ollama
-# anthropic
+anthropic
