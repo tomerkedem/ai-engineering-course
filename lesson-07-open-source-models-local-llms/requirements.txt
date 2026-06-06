@@ -2,6 +2,5 @@ transformers
 torch
 accelerate
 python-dotenv
-
-# ollama
+ollama
 # anthropic
