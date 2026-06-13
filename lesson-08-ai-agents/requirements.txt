@@ -4,3 +4,5 @@ langchain-community
 langchain-anthropic
 chromadb
 sentence-transformers
+yfinance
+python-dotenv

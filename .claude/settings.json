@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./.venv/Scripts/python.exe -m pip list)"
+      "Bash(./.venv/Scripts/python.exe -m pip list)",
+      "Bash(./.venv/Scripts/python.exe -m pip install yfinance)",
+      "Bash(./.venv/Scripts/python.exe -c \"import yfinance; from langchain.agents import create_agent; from langchain.chat_models import init_chat_model; from langchain_core.tools import tool; print\\('All stock_agent imports OK'\\)\")",
+      "Bash(./.venv/Scripts/python.exe -c \"from dotenv import load_dotenv; import os; load_dotenv\\(\\); print\\('Key loaded from .env:', bool\\(os.getenv\\('ANTHROPIC_API_KEY'\\)\\)\\)\")"
     ]
   }
 }

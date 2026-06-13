@@ -1,5 +1,6 @@
 import os
 
+from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.output_parsers import StrOutputParser
@@ -7,6 +8,9 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnablePassthrough
 
 from build_rag_db import load_vectorstore
+
+
+load_dotenv()
 
 
 MODEL_NAME = "claude-haiku-4-5-20251001"
