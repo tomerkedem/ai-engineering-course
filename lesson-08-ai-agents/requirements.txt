@@ -1,5 +1,6 @@
 langchain
 langchain-chroma
 langchain-community
+langchain-anthropic
 chromadb
 sentence-transformers

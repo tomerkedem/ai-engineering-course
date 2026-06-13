@@ -2,9 +2,20 @@ from pathlib import Path
 
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import TextLoader
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+hf_token = os.getenv("HF_TOKEN")
+
+if not hf_token:
+    raise RuntimeError("HF_TOKEN is missing. Please define it in your .env file.")
+
+print("HF_TOKEN loaded:", bool(hf_token))
 
 CHROMA_PERSIST_DIR = Path(__file__).parent / "chroma_db"
 COLLECTION_NAME = "rag_docs"
