@@ -1,0 +1,26 @@
+LangChain is a framework for building applications with large language models.
+It helps developers connect models to prompts, memory, tools, retrievers, and external data sources.
+
+RAG stands for Retrieval-Augmented Generation.
+A RAG system retrieves relevant information from external documents and gives that information to a language model as context.
+
+ChromaDB is a vector database.
+It can store embeddings and search for similar text based on meaning rather than exact keyword matching.
+
+A typical RAG pipeline has several steps.
+First, documents are loaded from files.
+Then the documents are split into smaller chunks.
+Each chunk is converted into an embedding.
+The embeddings are stored in a vector database.
+When a user asks a question, the system retrieves the most relevant chunks and sends them to the language model.
+
+Embeddings are numerical representations of text.
+Texts with similar meanings usually have embeddings that are close to each other in vector space.
+
+A retriever is the component that searches the vector store.
+It receives a user question and returns the most relevant chunks.
+
+The context window is the amount of text a language model can process at once.
+RAG helps keep the context focused by sending only the most relevant pieces of information.
+
+A good RAG system depends on good documents, useful chunk sizes, high-quality embeddings, and clear prompts.
