@@ -9,3 +9,8 @@ yfinance
 python-dotenv
 
 langchain-ollama
+
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart
