@@ -1,17 +1,12 @@
-import os
-
 import yfinance as yf
 from dotenv import load_dotenv
 from langchain.agents import create_agent
-from langchain.chat_models import init_chat_model
 from langchain_core.messages import AIMessage
 from langchain_core.tools import tool
 
+from llm_factory import build_llm
 
 load_dotenv()
-
-
-MODEL_NAME = "anthropic:claude-haiku-4-5-20251001"
 
 
 SYSTEM_PROMPT = """
@@ -87,27 +82,13 @@ def get_stock_info(symbol: str) -> str:
 
 
 def build_agent():
-    """
-    Build the stock agent with one external tool.
-    """
-    if not os.getenv("ANTHROPIC_API_KEY"):
-        raise EnvironmentError(
-            "ANTHROPIC_API_KEY is not set. "
-            "Please set it before running stock_agent.py."
-        )
+    model = build_llm()
 
-    model = init_chat_model(
-        MODEL_NAME,
-        temperature=0,
-    )
-
-    agent = create_agent(
+    return create_agent(
         model=model,
         tools=[get_stock_info],
         system_prompt=SYSTEM_PROMPT,
     )
-
-    return agent
 
 
 def query_agent(agent, user_input: str) -> str:

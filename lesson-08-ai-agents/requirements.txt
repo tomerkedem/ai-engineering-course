@@ -2,7 +2,10 @@ langchain
 langchain-chroma
 langchain-community
 langchain-anthropic
+langchain-huggingface
 chromadb
 sentence-transformers
 yfinance
 python-dotenv
+
+langchain-ollama

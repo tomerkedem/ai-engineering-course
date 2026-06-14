@@ -1,7 +1,4 @@
-import os
-
 from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -9,33 +6,14 @@ from langchain_core.runnables import RunnablePassthrough
 
 from build_rag_db import load_vectorstore
 
+from llm_factory import build_llm
+
 
 load_dotenv()
 
 
-MODEL_NAME = "claude-haiku-4-5-20251001"
 RETRIEVER_K = 4
 MAX_HISTORY_MESSAGES = 10
-
-
-def build_llm() -> ChatAnthropic:
-    """
-    Build the LLM client.
-
-    The API key is read from the ANTHROPIC_API_KEY environment variable.
-    """
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-
-    if not api_key:
-        raise EnvironmentError(
-            "ANTHROPIC_API_KEY is not set. "
-            "Please set it before running rag_chatbot.py."
-        )
-
-    return ChatAnthropic(
-        model=MODEL_NAME,
-        temperature=0,
-    )
 
 
 def build_rag_chain(vectorstore, llm):
