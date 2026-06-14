@@ -10,17 +10,24 @@ load_dotenv()
 
 
 SYSTEM_PROMPT = """
-You are a helpful stock market assistant.
+You are a helpful stock assistant.
 
-When the user asks about a stock price, quote, or market data,
-use the get_stock_info tool with the relevant ticker symbol.
+Use get_stock_info when the user asks about:
+- current stock price
+- quote
+- current market data
+- day high, day low, volume, or currency
 
-Do not invent stock prices or live market data.
+Use get_stock_year_performance when the user asks about:
+- whether a stock went up or down over the past year
+- one-year performance
+- 12-month performance
+- how a stock performed during the last year
 
-Do not provide financial advice.
-Do not tell the user to buy, sell, or hold a stock.
-
-Summarize the tool result clearly for the user.
+Do not invent live market data or historical performance.
+If the user does not provide a ticker symbol, ask for one.
+Summarize tool results clearly for the user.
+Do not provide financial advice or tell the user to buy or sell a stock.
 """
 
 
@@ -80,13 +87,55 @@ def get_stock_info(symbol: str) -> str:
     except Exception:
         return f"Error: Could not fetch stock data for {symbol}."
 
+@tool
+def get_stock_year_performance(symbol: str) -> str:
+    """Check whether a stock went up or down over the past year."""
+    symbol = symbol.strip().upper()
+
+    if not symbol:
+        return "Error: Please provide a stock ticker symbol."
+
+    try:
+        ticker = yf.Ticker(symbol)
+        history = ticker.history(period="1y")
+
+        if history.empty:
+            return f"Error: No historical price data found for {symbol}."
+
+        start_price = history["Close"].iloc[0]
+        end_price = history["Close"].iloc[-1]
+
+        if start_price == 0:
+            return f"Error: Invalid start price found for {symbol}."
+
+        change = end_price - start_price
+        change_percent = (change / start_price) * 100
+
+        if change > 0:
+            direction = "up"
+        elif change < 0:
+            direction = "down"
+        else:
+            direction = "flat"
+
+        return (
+            f"{symbol} went {direction} over the past year.\n"
+            f"Start price: {start_price:.2f}\n"
+            f"End price: {end_price:.2f}\n"
+            f"Change: {change_percent:.2f}%"
+        )
+
+    except Exception:
+        return f"Error: Could not fetch historical data for {symbol}."
 
 def build_agent():
     model = build_llm()
 
     return create_agent(
         model=model,
-        tools=[get_stock_info],
+        tools=[get_stock_info, 
+               get_stock_year_performance
+        ],
         system_prompt=SYSTEM_PROMPT,
     )
 
