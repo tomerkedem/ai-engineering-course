@@ -24,7 +24,18 @@ Use get_stock_year_performance when the user asks about:
 - 12-month performance
 - how a stock performed during the last year
 
-Do not invent live market data or historical performance.
+Use get_stock_recommendations when the user asks about:
+- analyst recommendations
+- analyst ratings
+- upgrades or downgrades
+
+Use get_stock_news when the user asks about:
+- recent news
+- headlines
+- company news
+- latest events related to a stock
+
+Do not invent live market data, historical performance, recommendations, or news.
 If the user does not provide a ticker symbol, ask for one.
 Summarize tool results clearly for the user.
 Do not provide financial advice or tell the user to buy or sell a stock.
@@ -128,13 +139,85 @@ def get_stock_year_performance(symbol: str) -> str:
     except Exception:
         return f"Error: Could not fetch historical data for {symbol}."
 
+@tool
+def get_stock_recommendations(symbol: str) -> str:
+    """Get recent analyst recommendations for a stock ticker."""
+    symbol = symbol.strip().upper()
+
+    if not symbol:
+        return "Error: Please provide a stock ticker symbol."
+
+    try:
+        ticker = yf.Ticker(symbol)
+        recommendations = ticker.recommendations
+
+        if recommendations is None or recommendations.empty:
+            return f"No analyst recommendations found for {symbol}."
+
+        latest = recommendations.tail(5)
+
+        rows = []
+        for _, row in latest.iterrows():
+            firm = row.get("Firm", "Unknown firm")
+            to_grade = row.get("To Grade", "Unknown rating")
+            action = row.get("Action", "")
+
+            if action:
+                rows.append(f"- {firm}: {to_grade} ({action})")
+            else:
+                rows.append(f"- {firm}: {to_grade}")
+
+        return (
+            f"Recent analyst recommendations for {symbol}:\n"
+            + "\n".join(rows)
+        )
+
+    except Exception:
+        return f"Error: Could not fetch analyst recommendations for {symbol}."
+
+
+@tool
+def get_stock_news(symbol: str) -> str:
+    """Get recent news headlines for a stock ticker."""
+    symbol = symbol.strip().upper()
+
+    if not symbol:
+        return "Error: Please provide a stock ticker symbol."
+
+    try:
+        ticker = yf.Ticker(symbol)
+        news_items = ticker.news
+
+        if not news_items:
+            return f"No recent news found for {symbol}."
+
+        top_items = news_items[:5]
+
+        rows = []
+        for item in top_items:
+            title = item.get("title", "No title")
+            publisher = item.get("publisher", "Unknown publisher")
+            link = item.get("link")
+
+            if link:
+                rows.append(f"- {title} ({publisher})\n  {link}")
+            else:
+                rows.append(f"- {title} ({publisher})")
+
+        return f"Recent news for {symbol}:\n" + "\n".join(rows)
+
+    except Exception:
+        return f"Error: Could not fetch news for {symbol}."
+
 def build_agent():
     model = build_llm()
 
     return create_agent(
         model=model,
         tools=[get_stock_info, 
-               get_stock_year_performance
+               get_stock_year_performance,
+               get_stock_recommendations,
+               get_stock_news
         ],
         system_prompt=SYSTEM_PROMPT,
     )
