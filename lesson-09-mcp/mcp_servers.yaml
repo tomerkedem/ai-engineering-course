@@ -1,0 +1,12 @@
+servers:
+  # local:
+  #   url: http://127.0.0.1:8765/mcp
+  #   description: Local MCP server (run server.py first)
+  supabase:
+    url: https://mcp.supabase.com/mcp?project_ref=${SUPABASE_PROJECT_REF}
+    url_env: SUPABASE_MCP_URL
+    auth_token_env: SUPABASE_ACCESS_TOKEN
+    description: Hosted Supabase MCP (optional PAT auth)
+    system_prompt_suffix: >-
+      Supabase tools are prefixed supabase__. Prefer execute_sql for read-only SQL.
+      Avoid destructive DDL unless the user explicitly asks.
