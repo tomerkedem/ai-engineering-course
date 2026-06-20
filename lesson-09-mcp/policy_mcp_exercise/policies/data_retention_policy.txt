@@ -1,0 +1,10 @@
+Data Retention Policy
+
+Company data must be kept only for as long as it is needed for business, legal, or security purposes.
+
+General rules:
+- Customer support records are retained for 24 months.
+- Security logs are retained for 12 months.
+- Temporary files should be deleted when they are no longer needed.
+- Employees must not copy company data into personal storage accounts.
+- Requests to delete or export data should be sent to the data protection team.

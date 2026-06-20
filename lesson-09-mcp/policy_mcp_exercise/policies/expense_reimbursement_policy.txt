@@ -1,0 +1,10 @@
+Expense Reimbursement Policy
+
+Employees may request reimbursement for approved business expenses.
+
+Rules:
+- Submit the reimbursement request within 30 days of the expense.
+- Attach a valid receipt or invoice.
+- Include the business reason for the expense.
+- Manager approval is required before payment.
+- Personal expenses, unclear receipts, and late submissions may be rejected.

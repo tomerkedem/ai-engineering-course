@@ -1,0 +1,11 @@
+Remote Work Security Policy
+
+Employees may work remotely only when they follow the company's security requirements.
+
+Required practices:
+- Use a company-approved device whenever possible.
+- Connect through the approved VPN or secure access solution.
+- Do not share your device with other people while working.
+- Lock your screen whenever you step away.
+- Avoid using public Wi-Fi unless you are connected through the approved secure connection.
+- Report lost devices, suspicious login attempts, or unusual system behavior immediately.
