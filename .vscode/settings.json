@@ -1,3 +1,8 @@
 {
-  "python.defaultInterpreterPath": "${workspaceFolder}/lesson-09-mcp/.venv/Scripts/python.exe"
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/lesson-10-multi-agents-and-langgraph/.venv/Lib/site-packages",
+    "${workspaceFolder}/lesson-08-ai-agents/.venv/Lib/site-packages",
+    "${workspaceFolder}/lesson-09-mcp/.venv/Lib/site-packages",
+    "${workspaceFolder}/lesson-07-open-source-models-local-llms/.venv/Lib/site-packages"
+  ]
 }

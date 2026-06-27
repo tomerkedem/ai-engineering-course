@@ -1,0 +1,16 @@
+{
+  "folders": [
+    { "name": "lesson-02", "path": "lesson-02" },
+    { "name": "lesson-03-natural-language-processing", "path": "lesson-03-natural-language-processing" },
+    { "name": "lesson-04-llm-apis", "path": "lesson-04-llm-apis" },
+    { "name": "lesson-05-llm-test", "path": "lesson-05-llm-test" },
+    { "name": "lesson-06-rag", "path": "lesson-06-rag" },
+    { "name": "lesson-07-open-source-models-local-llms", "path": "lesson-07-open-source-models-local-llms" },
+    { "name": "lesson-08-ai-agents", "path": "lesson-08-ai-agents" },
+    { "name": "lesson-09-mcp", "path": "lesson-09-mcp" },
+    { "name": "lesson-10-multi-agents-and-langgraph", "path": "lesson-10-multi-agents-and-langgraph" }
+  ],
+  "settings": {
+    "python.analysis.autoSearchPaths": true
+  }
+}
