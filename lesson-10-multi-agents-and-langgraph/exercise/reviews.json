@@ -1,0 +1,37 @@
+[
+  {
+    "review_id": "rev_001",
+    "user_name": "Alex M.",
+    "rating": 5,
+    "review_text": "Absolutely blown away by the sound quality on these headphones! The active noise cancellation (ANC) blocks out my noisy office entirely. The battery easily lasts me through a couple of workdays. My only tiny gripe is that the carrying case is a bit bulky, but the headphones themselves are worth every penny.",
+    "timestamp": "2026-05-14T10:30:00Z"
+  },
+  {
+    "review_id": "rev_002",
+    "user_name": "Sarah T.",
+    "rating": 2,
+    "review_text": "The audio is decent, but these are so uncomfortable. The clamping force is way too tight, and my ears start sweating after just 30 minutes of use. Worse, the companion app completely crashes every time I try to adjust the equalizer settings. Returning these.",
+    "timestamp": "2026-05-20T14:15:00Z"
+  },
+  {
+    "review_id": "rev_003",
+    "user_name": "David K.",
+    "rating": 4,
+    "review_text": "Solid pair of cans. The wireless connectivity is seamless and lets me switch between my phone and laptop instantly. Sound profile leans a bit heavy on the bass, which I like. The built-in microphone sounds a little muffled during Zoom calls, but for listening to music, they are great.",
+    "timestamp": "2026-06-01T09:05:00Z"
+  },
+  {
+    "review_id": "rev_004",
+    "user_name": "Elena R.",
+    "rating": 1,
+    "review_text": "Do not buy if you plan to use the app features. The hardware seems okay, but the software is completely broken. It refuses to pair via the app on Android, which means you lose access to half the features you paid for. Customer support was zero help.",
+    "timestamp": "2026-06-12T18:45:00Z"
+  },
+  {
+    "review_id": "rev_005",
+    "user_name": "Marcus L.",
+    "rating": 3,
+    "review_text": "An average experience. The sound signature is balanced, and the noise cancellation is acceptable for a daily commute. However, the plastic hinges feel incredibly cheap and squeak whenever I adjust the headband. They work for now, but I worry about long-term durability.",
+    "timestamp": "2026-06-19T21:20:00Z"
+  }
+]
