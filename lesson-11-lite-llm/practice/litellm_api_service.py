@@ -11,11 +11,18 @@ Upgrade an API-based LLM service to use LiteLLM while keeping:
 - Fallback to Gemini if Anthropic is unavailable
 
 Requires:
-    pip install fastapi uvicorn litellm pydantic
+    pip install fastapi uvicorn litellm pydantic python-dotenv
 
-Environment:
-    ANTHROPIC_API_KEY
-    GEMINI_API_KEY
+Environment from .env:
+    ANTHROPIC_API_KEY=your-anthropic-key
+    GEMINI_API_KEY=your-gemini-key
+
+    ANTHROPIC_MODEL=claude-haiku-4-5-20251001
+    LITELLM_MODEL=claude-haiku-4-5-20251001
+    GEMINI_MODEL=gemini-3.5-flash
+
+Optional:
+    MAX_RETRIES=3
 
 Run:
     uvicorn litellm_api_service:app --reload
@@ -25,19 +32,83 @@ import json
 import os
 from typing import Any
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from litellm import acompletion
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
 
-PRIMARY_MODEL = os.getenv("PRIMARY_MODEL", "anthropic/claude-haiku-4-5")
-FALLBACK_MODEL = os.getenv("FALLBACK_MODEL", "gemini/gemini-3.5-flash")
+load_dotenv()
+
+
+def resolve_provider_model(model_name: str, default_provider: str) -> str:
+    """
+    LiteLLM usually expects a provider prefix.
+
+    Example:
+        claude-haiku-4-5-20251001
+    becomes:
+        anthropic/claude-haiku-4-5-20251001
+
+    If the model already contains a provider prefix, it is returned as-is.
+    """
+    model_name = model_name.strip()
+
+    if "/" in model_name:
+        return model_name
+
+    return f"{default_provider}/{model_name}"
+
+
+def get_primary_model() -> str:
+    """
+    Resolve the primary Anthropic model from .env.
+
+    Priority:
+    1. PRIMARY_MODEL
+    2. LITELLM_MODEL
+    3. ANTHROPIC_MODEL
+    4. default Claude model
+    """
+    model = (
+        os.getenv("PRIMARY_MODEL")
+        or os.getenv("LITELLM_MODEL")
+        or os.getenv("ANTHROPIC_MODEL")
+        or "claude-haiku-4-5-20251001"
+    )
+
+    return resolve_provider_model(model, "anthropic")
+
+
+def get_fallback_model() -> str:
+    """
+    Resolve the Gemini fallback model from .env.
+
+    Priority:
+    1. FALLBACK_MODEL
+    2. GEMINI_MODEL
+    3. default Gemini model
+    """
+    model = (
+        os.getenv("FALLBACK_MODEL")
+        or os.getenv("GEMINI_MODEL")
+        or "gemini-3.5-flash"
+    )
+
+    return resolve_provider_model(model, "gemini")
+
+
+PRIMARY_MODEL = get_primary_model()
+FALLBACK_MODEL = get_fallback_model()
 MAX_RETRIES = int(os.getenv("MAX_RETRIES", "3"))
 
 
 app = FastAPI(
     title="LiteLLM Practice API",
-    description="Async API service using LiteLLM with formatted response, validation, retries and fallback.",
+    description=(
+        "Async API service using LiteLLM with formatted response, "
+        "validation, retries and fallback."
+    ),
     version="1.0.0",
 )
 
@@ -176,6 +247,19 @@ async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/config")
+async def config() -> dict[str, str | int]:
+    """
+    Simple debug endpoint for learning purposes.
+    Do not expose API keys here.
+    """
+    return {
+        "primary_model": PRIMARY_MODEL,
+        "fallback_model": FALLBACK_MODEL,
+        "max_retries": MAX_RETRIES,
+    }
+
+
 @app.post("/languages/traits", response_model=LanguageTraitsResponse)
 async def create_language_traits(
     request: LanguageTraitsRequest,
@@ -187,4 +271,7 @@ async def create_language_traits(
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Unexpected server error: {exc}") from exc
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unexpected server error: {exc}",
+        ) from exc
