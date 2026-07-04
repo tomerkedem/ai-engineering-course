@@ -8,19 +8,26 @@ and return a valid JSON array with objects that contain:
 - trait
 
 Requires:
-    pip install litellm pydantic
+    pip install litellm pydantic python-dotenv
 
-Environment:
-    ANTHROPIC_API_KEY
-    or another provider key, depending on the selected model.
+Environment from .env:
+    ANTHROPIC_API_KEY=your-anthropic-key
+    LITELLM_MODEL=claude-haiku-4-5-20251001
+
+Optional:
+    ANTHROPIC_MODEL=claude-haiku-4-5-20251001
 """
 
 import json
 import os
 from typing import Any
 
+from dotenv import load_dotenv
 from litellm import completion
 from pydantic import BaseModel, ValidationError, field_validator
+
+
+load_dotenv()
 
 
 class ProgrammingLanguageTrait(BaseModel):
@@ -42,6 +49,30 @@ class ProgrammingLanguageTrait(BaseModel):
         if len(value.split()) != 1:
             raise ValueError("Trait must be exactly one word")
         return value
+
+
+def resolve_model() -> str:
+    """
+    Read the model name from .env.
+
+    LiteLLM usually expects the provider prefix, for example:
+    anthropic/claude-haiku-4-5-20251001
+
+    If the .env contains only:
+    claude-haiku-4-5-20251001
+
+    this function adds the anthropic/ prefix automatically.
+    """
+    model = (
+        os.getenv("LITELLM_MODEL")
+        or os.getenv("ANTHROPIC_MODEL")
+        or "claude-haiku-4-5-20251001"
+    ).strip()
+
+    if "/" not in model:
+        model = f"anthropic/{model}"
+
+    return model
 
 
 def strip_json_markdown(text: str) -> str:
@@ -87,7 +118,7 @@ def parse_and_validate_languages(raw_text: str) -> list[ProgrammingLanguageTrait
 
 
 def main() -> None:
-    model = os.getenv("LITELLM_MODEL", "anthropic/claude-haiku-4-5")
+    model = resolve_model()
 
     response = completion(
         model=model,
