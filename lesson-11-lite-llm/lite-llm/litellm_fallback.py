@@ -10,7 +10,7 @@ from litellm import acompletion, completion_cost
 async def main():
     
     response_with_fallback = await acompletion(
-        model="anthropic/claude-haiku-4-5",
+        model="anthropic/claude-haiku-4-5-9",
         messages=[{"role": "user", "content": "Say hello in one short sentence."}],
         max_tokens=256,
         fallbacks=["gemini/gemini-3.5-flash"],

@@ -1,0 +1,20 @@
+# LiteLLM proxy configuration.
+# Start the proxy with:  litellm --config config.yaml --port 4000
+# The proxy reads provider API keys from the environment (.env or $env:VAR).
+
+model_list:
+  # Alias "claude-haiku" -> Anthropic Claude Haiku 4.5
+  - model_name: claude-haiku
+    litellm_params:
+      model: anthropic/claude-haiku-4-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  # Uncomment to also expose Gemini (needs GEMINI_API_KEY in the environment):
+  # - model_name: gemini-flash
+  #   litellm_params:
+  #     model: gemini/gemini-3.5-flash
+  #     api_key: os.environ/GEMINI_API_KEY
+
+general_settings:
+  # Must match LITELLM_MASTER_KEY used by the client (default in the script: sk-1234)
+  master_key: sk-1234

@@ -3,6 +3,7 @@ Async example: call Anthropic Claude 3.5 Haiku via LiteLLM.
 Requires: pip install litellm
 Env: ANTHROPIC_API_KEY, GEMINI_API_KEY
 """
+
 import asyncio
 from litellm import acompletion
 
