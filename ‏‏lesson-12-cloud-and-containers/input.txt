@@ -1,0 +1,5 @@
+Artificial intelligence has transformed how we interact with technology in recent years.
+Large language models can now read, write, and reason about complex topics with surprising fluency.
+Businesses use these systems for customer support, document analysis, and software development assistance.
+At the same time, questions remain about accuracy, privacy, and the environmental cost of training and running models at scale.
+Responsible deployment requires clear guardrails, human oversight, and transparency about what automated systems can and cannot do.
