@@ -24,3 +24,6 @@ Thumbs.db
 
 models/
 outputs/
+
+# Final project - kept local only
+final-project/
