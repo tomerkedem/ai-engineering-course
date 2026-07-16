@@ -13,6 +13,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from dataclasses import dataclass, field
@@ -25,6 +26,11 @@ from dotenv import load_dotenv
 MODEL = "claude-haiku-4-5"
 MAX_TOKENS = 8192
 MAX_TURNS = 40
+
+# Generated deliverables are collected here (relative to the workspace root).
+OUTPUT_DIR_NAME = "output"
+# Artifact suffixes swept into the output directory after a run.
+ARTIFACT_SUFFIXES = {".pptx", ".pdf", ".docx", ".xlsx", ".pptm", ".key"}
 
 # Client-native + cross-client skill roots (project then user).
 # Project skills override user skills on name collision.
@@ -205,6 +211,11 @@ def build_system_prompt(registry: SkillRegistry, workspace: Path) -> str:
         *shell_lines,
         "",
         f"Workspace: {workspace.resolve()}",
+        f"Output directory: {(workspace / OUTPUT_DIR_NAME).resolve()}",
+        "IMPORTANT: Save every generated deliverable (.pptx, .pdf, .docx, .xlsx, etc.)",
+        "into the 'output' directory shown above, using its ABSOLUTE path — never a",
+        "bare filename (a bare filename lands in the workspace root, which is wrong).",
+        f"Example: write the deck to \"{(workspace / OUTPUT_DIR_NAME / 'deck.pptx').resolve()}\".",
         "",
         "<available_skills>",
     ]
@@ -465,6 +476,44 @@ def handle_tool(
     return f"Unknown tool: {name}"
 
 
+def _snapshot_artifacts(directory: Path) -> dict[str, float]:
+    """Map artifact filename -> mtime for artifacts directly in `directory`."""
+    snapshot: dict[str, float] = {}
+    if not directory.is_dir():
+        return snapshot
+    for child in directory.iterdir():
+        if child.is_file() and child.suffix.lower() in ARTIFACT_SUFFIXES:
+            snapshot[child.name] = child.stat().st_mtime
+    return snapshot
+
+
+def _relocate_outputs(workspace: Path, before: dict[str, float]) -> list[Path]:
+    """Move newly created/modified artifacts from workspace root into output/.
+
+    The model is asked to write deliverables straight into the output directory;
+    this is a deterministic safety net for when it writes a bare filename that
+    lands in the workspace root instead.
+    """
+    output_dir = workspace / OUTPUT_DIR_NAME
+    moved: list[Path] = []
+    for child in list(workspace.iterdir()):
+        if not child.is_file() or child.suffix.lower() not in ARTIFACT_SUFFIXES:
+            continue
+        # Only touch files this run created or changed.
+        if before.get(child.name) == child.stat().st_mtime:
+            continue
+        output_dir.mkdir(parents=True, exist_ok=True)
+        dest = output_dir / child.name
+        try:
+            if dest.exists():
+                dest.unlink()
+            shutil.move(str(child), str(dest))
+            moved.append(dest)
+        except OSError as exc:
+            print(f"[warn] could not move {child} -> {dest}: {exc}", file=sys.stderr)
+    return moved
+
+
 def run_agent(prompt: str, workspace: Path, registry: SkillRegistry) -> str:
     client = Anthropic()
     system = build_system_prompt(registry, workspace)
@@ -472,6 +521,7 @@ def run_agent(prompt: str, workspace: Path, registry: SkillRegistry) -> str:
     messages: list[dict] = [{"role": "user", "content": prompt}]
     activated: set[str] = set()
     final_text: list[str] = []
+    artifacts_before = _snapshot_artifacts(workspace)
 
     for _ in range(MAX_TURNS):
         response = client.messages.create(
@@ -515,6 +565,9 @@ def run_agent(prompt: str, workspace: Path, registry: SkillRegistry) -> str:
                 }
             )
         messages.append({"role": "user", "content": tool_results})
+
+    for dest in _relocate_outputs(workspace, artifacts_before):
+        print(f"[info] moved generated file to {dest}")
 
     return "\n".join(final_text).strip()
 
