@@ -11,8 +11,8 @@ from langfuse import observe, propagate_attributes, get_client
 from anthropic import Anthropic
 from opentelemetry.instrumentation.anthropic import AnthropicInstrumentor
 
-# Load .env from the same directory as this script
-load_dotenv(Path(__file__).resolve().parent / ".env")
+# Load the repo-root .env (shared across lessons)
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 # Capture all Anthropic calls (including token usage) into the trace
 AnthropicInstrumentor().instrument()

@@ -1,6 +1,6 @@
 """
 Simple Langfuse example: trace LLM calls and see token usage.
-Loads API keys from .env (LANGFUSE_*, ANTHROPIC_API_KEY).
+Loads API keys from the repo-root .env (LANGFUSE_*, ANTHROPIC_API_KEY).
 AnthropicInstrumentor captures each Anthropic call as a Generation with token usage.
 user_id / session_id group traces under Users and Sessions in the Langfuse UI.
 """
@@ -10,8 +10,8 @@ from langfuse import observe, propagate_attributes
 from anthropic import Anthropic
 from opentelemetry.instrumentation.anthropic import AnthropicInstrumentor
 
-# Load .env from the same directory as this script
-load_dotenv(Path(__file__).resolve().parent / ".env")
+# Load the repo-root .env (shared across lessons)
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 # Capture all Anthropic calls (including token usage) into the trace
 AnthropicInstrumentor().instrument()

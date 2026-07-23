@@ -1,7 +1,7 @@
 """
 Langfuse prompt management example: fetch a prompt from Langfuse, run it, and trace.
-Loads API keys from .env (LANGFUSE_*, ANTHROPIC_API_KEY).
-Uses prompt 'test_1' (latest version).
+Loads API keys from the repo-root .env (LANGFUSE_*, ANTHROPIC_API_KEY).
+Uses prompt 'prompt_1' (latest version).
 user_id / session_id group traces under Users and Sessions in the Langfuse UI.
 """
 from pathlib import Path
@@ -11,8 +11,8 @@ from langfuse.model import ChatPromptClient
 from anthropic import Anthropic
 from opentelemetry.instrumentation.anthropic import AnthropicInstrumentor
 
-# Load .env from the same directory as this script
-load_dotenv(Path(__file__).resolve().parent / ".env")
+# Load the repo-root .env (shared across lessons)
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 # Capture all Anthropic calls (including token usage) into the trace
 AnthropicInstrumentor().instrument()

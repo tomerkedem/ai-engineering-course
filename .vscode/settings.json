@@ -3,7 +3,8 @@
     "${workspaceFolder}/lesson-10-multi-agents-and-langgraph/.venv/Lib/site-packages",
     "${workspaceFolder}/lesson-08-ai-agents/.venv/Lib/site-packages",
     "${workspaceFolder}/lesson-09-mcp/.venv/Lib/site-packages",
-    "${workspaceFolder}/lesson-07-open-source-models-local-llms/.venv/Lib/site-packages"
+    "${workspaceFolder}/lesson-07-open-source-models-local-llms/.venv/Lib/site-packages",
+    "${workspaceFolder}/\u200F\u200F\u200F\u200F\u200F\u200Flesson-14-observability-and-evaluations/.venv/Lib/site-packages"
   ],
    "version": "0.2.0",
     "configurations": [
